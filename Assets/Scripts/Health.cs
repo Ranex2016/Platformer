@@ -12,7 +12,12 @@ public class Health : MonoBehaviour
     /// </summary>
     /// <param name="damage"></param>
     public void TakeHit(int damage)
-    {
+    {   
+        // Проверим что урон не больше чем здоровья у игрока, иначе их сравняем
+        if (health < damage)
+        {
+            damage = health;
+        }
         health -= damage;
         if (health <= 0) { Destroy(gameObject); }
         Debug.Log("получен урон = " + damage + " осталось " + health);

@@ -7,11 +7,14 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private int coinsCount;
     public static PlayerInventory Instance { get; set; } // Создание синглтона
 
-    // Гетер и сетер для oinsCount
+    // Гетер и сетер для CoinsCount
     public int CoinsCount
     {
         get { return coinsCount; }
-        set { coinsCount = value; }
+        set
+        {
+            if (value >= 1) { coinsCount = value; }
+        }
     }
     private void Awake()
     {

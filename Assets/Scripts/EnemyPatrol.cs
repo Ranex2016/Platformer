@@ -22,7 +22,7 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
-        if (isRightDerection == true && groundDetection.getIsGrounded() == true)
+        if (isRightDerection == true && groundDetection.IsGrounded == true)
         {
             rigidBody.velocity = Vector2.right * speed;
             if (transform.position.x >= rightBorder.transform.position.x)
@@ -30,7 +30,7 @@ public class EnemyPatrol : MonoBehaviour
                 isRightDerection = !isRightDerection;
             }
         }
-        else if (groundDetection.getIsGrounded() == true)
+        else if (groundDetection.IsGrounded == true)
         {
             rigidBody.velocity = Vector2.left * speed;
             if (transform.position.x <= leftBorder.transform.position.x)
@@ -43,7 +43,7 @@ public class EnemyPatrol : MonoBehaviour
         if (rigidBody.velocity.x > 0)
         {
             spriteRenderer.flipX = true;
-            if (groundDetection.getIsGrounded())
+            if (groundDetection.IsGrounded)
             {
                 animator.SetFloat("Speed", rigidBody.velocity.x);
             }else{
@@ -54,7 +54,7 @@ public class EnemyPatrol : MonoBehaviour
         else
         {
             spriteRenderer.flipX = false;
-            if(groundDetection.getIsGrounded())
+            if(groundDetection.IsGrounded)
             {
                 animator.SetFloat("Speed", Mathf.Abs(rigidBody.velocity.x));
             }

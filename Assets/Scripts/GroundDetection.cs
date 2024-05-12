@@ -5,7 +5,7 @@ using UnityEngine;
 public class GroundDetection : MonoBehaviour
 {
     [SerializeField] private bool isGrounded;
-
+    public bool IsGrounded => isGrounded;
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Platform"))
@@ -19,10 +19,5 @@ public class GroundDetection : MonoBehaviour
         {
             isGrounded = false;
         }
-    }
-
-    public bool getIsGrounded()
-    {
-        return isGrounded;
     }
 }
