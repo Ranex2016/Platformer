@@ -21,12 +21,14 @@ public class Health : MonoBehaviour
     public void SetHealth(int bonusHealth)
     {
         health += bonusHealth;
-        if (health > maxHealth) {
+        if (health > maxHealth)
+        {
             health = maxHealth;
         }
     }
 
-    public int GetHealth() {
+    public int GetHealth()
+    {
         return health;
     }
 }

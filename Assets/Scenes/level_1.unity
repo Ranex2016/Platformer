@@ -301,6 +301,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4989922734510536024, guid: bf61db89b90ee1649882ab24e0f3ad4f,
+        type: 3}
+      propertyPath: rb
+      value: 
+      objectReference: {fileID: 2052107701}
+    - target: {fileID: 5692234855415131997, guid: bf61db89b90ee1649882ab24e0f3ad4f,
+        type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 2052107695}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf61db89b90ee1649882ab24e0f3ad4f, type: 3}
 --- !u!1001 &1020543652
@@ -561,6 +571,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8632193960066573508, guid: e74a24da12282824ea778c05ebe9a7db,
     type: 3}
   m_PrefabInstance: {fileID: 879708137}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &2052107695 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1038633619, guid: bf61db89b90ee1649882ab24e0f3ad4f,
+    type: 3}
+  m_PrefabInstance: {fileID: 912896588}
+  m_PrefabAsset: {fileID: 0}
+--- !u!50 &2052107701 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 4989922734510536007, guid: bf61db89b90ee1649882ab24e0f3ad4f,
+    type: 3}
+  m_PrefabInstance: {fileID: 912896588}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &299185106567770705
 PrefabInstance:

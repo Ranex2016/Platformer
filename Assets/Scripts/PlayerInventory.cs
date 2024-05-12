@@ -5,14 +5,16 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private int coinsCount;
+    public static PlayerInventory Instance { get; set; } // Создание синглтона
 
-    private void OnTriggerEnter2D(Collider2D other)
+    // Гетер и сетер для oinsCount
+    public int CoinsCount
     {
-        if (other.gameObject.CompareTag("Coin"))
-        {
-            coinsCount++;
-            Destroy(other.gameObject);
-            Debug.Log("количество монет: " + coinsCount);
-        }
+        get { return coinsCount; }
+        set { coinsCount = value; }
+    }
+    private void Awake()
+    {
+        Instance = this; // Инициализация синглтона
     }
 }

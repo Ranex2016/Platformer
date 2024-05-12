@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,24 +8,19 @@ public class Player : MonoBehaviour
     [SerializeField] private float force;
     [SerializeField] private float minHeight = -10;
     [SerializeField] private bool isCheatMode = false;
-    private Rigidbody2D rb;
+    [SerializeField] private Rigidbody2D rb;
     [SerializeField] private GroundDetection groundDetection;
     private Vector2 direction;
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     private bool isJumping;
 
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
     void Update()
     {
         animator.SetBool("isGrounded", groundDetection.getIsGrounded());
         isJumping = isJumping && !groundDetection.getIsGrounded();
 
-        if(!isJumping && !groundDetection.getIsGrounded()) // если мы не пригнулы и не касаемся земли, то это подение
+        if (!isJumping && !groundDetection.getIsGrounded()) // если мы не пригнулы и не касаемся земли, то это подение
         {
             animator.SetTrigger("StartFall");
         }
@@ -43,7 +38,7 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = false;
         }
         direction *= speed;
-        direction.y =  rb.velocity.y;
+        direction.y = rb.velocity.y;
         rb.velocity = direction;
 
         if (Input.GetKeyDown(KeyCode.Space) && groundDetection.getIsGrounded()) // Прыжок игрока
@@ -58,7 +53,6 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", Mathf.Abs(direction.x));
 
         CheckFall();
-
     }
 
     /// <summary>
@@ -74,6 +68,17 @@ public class Player : MonoBehaviour
         else if (transform.position.y < minHeight && !isCheatMode)
         {
             Destroy(gameObject);
+        }
+    }
+
+    // Проверка столкновения с манеткой
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Coin"))
+        {
+            PlayerInventory.Instance.CoinsCount += 1;
+            Debug.Log("Манет у игрока: " + PlayerInventory.Instance.CoinsCount);  
+            Destroy(other.gameObject);
         }
     }
 }

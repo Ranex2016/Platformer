@@ -8,20 +8,24 @@ public class CollisionDamage : MonoBehaviour
     [SerializeField] private string collisionTag;
     [SerializeField] private Animator animator;
     private float timeBetweenAttacks = -1;
-    private void OnCollisionStay2D(Collision2D other) {
+    private void OnCollisionStay2D(Collision2D other)
+    {
         // проверяем столкновение объектов по тегу
         if (other.gameObject.CompareTag(collisionTag))
         {
             Health health = other.gameObject.GetComponent<Health>();
-            
-            
-            if(timeBetweenAttacks < Time.time)
+
+
+            if (timeBetweenAttacks < Time.time)
             {
                 timeBetweenAttacks = Time.time + 1;
-                animator.SetTrigger("findPlayer");
+                if (this.gameObject.tag == "Enemy")
+                {
+                    animator.SetTrigger("findPlayer");
+                }
                 health.TakeHit(damage);
             }
-            
+
         }
     }
 
