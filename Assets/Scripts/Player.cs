@@ -7,20 +7,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5;
-    public float Speed
-    {
-        get { return speed; }
-        set
-        {
-            if (value <= 0.5f)
-            { speed = 0.5f; }
-            else
-            {
-                speed = value;
-            }
-        }
-    }
     [SerializeField] private float force;
+    [SerializeField] private float shootForce;
     [SerializeField] private float minHeight = -10;
     [SerializeField] private bool isCheatMode = false;
     [SerializeField] private Rigidbody2D rb;
@@ -29,19 +17,17 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     private bool isJumping;
+    [SerializeField] private GameObject arrow;
+    [SerializeField] private Transform arrowSpawnPoint;
 
-    private void Start()
+    public float Speed // Свойство скорости
     {
-        // Animal dog = new Dog();
-        // dog.Message();
-        // dog.Sound();
-        // Animal cat = new Cat();
-        // cat.Message();
-        // cat.Sound();
-        // Vehicle car = new Car();
-        // car.Bip();
-        // Vehicle truck = new Truck();
-        // truck.Bip();
+        get { return speed; }
+        set
+        {
+            if (value <= 0.5f) { speed = 0.5f; }
+            else { speed = value; }
+        }
     }
 
     void Update()
@@ -78,10 +64,36 @@ public class Player : MonoBehaviour
             isJumping = true;
         }
 
+        // отмена стрельбы если персонаж находится не на земле или движется
+        if (!groundDetection.IsGrounded || direction.x > 0 || direction.x < 0)
+        {
+            animator.SetBool("StartAttack", false);
+        }
+
         // Управляем анимациех ходьбы
         animator.SetFloat("Speed", Mathf.Abs(direction.x));
 
         CheckFall();
+        CheckShoot();
+    }
+
+    // Создание стрелы
+    public void CheckShoot()
+    {
+        if (Input.GetMouseButtonDown(0) && groundDetection.IsGrounded)
+        {
+            animator.SetBool("StartAttack", true);
+        }
+    }
+
+    public void StartAttack()
+    {
+        GameObject prefab = Instantiate(arrow, arrowSpawnPoint.position, Quaternion.identity);
+        prefab.GetComponent<Arrow>().SetImpuls(
+                                    Vector2.right,
+                                    (spriteRenderer.flipX ? -force * shootForce : force * shootForce),
+                                    this.gameObject);
+        animator.SetBool("StartAttack", false);
     }
 
     /// <summary>
@@ -109,73 +121,5 @@ public class Player : MonoBehaviour
             Debug.Log("Манет у игрока: " + PlayerInventory.Instance.CoinsCount);
             Destroy(other.gameObject);
         }
-    }
-}
-
-abstract class Animal : IAnimal
-{
-    public string name;
-    public int ageOfDays;
-    public abstract void Message();
-    public abstract void Sound();
-}
-
-class Dog : Animal
-{
-    public override void Message()
-    {
-        Debug.Log("Гав");
-    }
-    public override void Sound()
-    {
-        Debug.Log("Я собака!");
-    }
-}
-
-class Cat : Animal
-{
-    public override void Message()
-    {
-        Debug.Log("Мяу");
-    }
-
-    public override void Sound()
-    {
-        Debug.Log("Я кот!");
-    }
-}
-
-interface IAnimal
-{
-    void Sound();
-}
-
-abstract class Vehicle
-{
-    public string name;
-    public virtual void Bip()
-    {
-        name = "Машина";
-        Debug.Log(name + ": Гудок!");
-    }
-}
-
-class Car : Vehicle
-{
-    public override void Bip()
-    {
-        base.Bip();
-        name = "Масквич 2106";
-        Debug.Log(name + ": Бибик!");
-    }
-}
-
-class Truck : Vehicle
-{
-    public override void Bip()
-    {
-        base.Bip();
-        name = "MAN";
-        Debug.Log(name + ": Пау-Пау!");
     }
 }

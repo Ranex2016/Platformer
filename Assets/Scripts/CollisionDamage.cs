@@ -5,28 +5,28 @@ using UnityEngine;
 public class CollisionDamage : MonoBehaviour
 {
     [SerializeField] private int damage = 10;
-    [SerializeField] private string collisionTag;
     [SerializeField] private Animator animator;
-    private float timeBetweenAttacks = -1;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    private Health health;
+    private float direction;
+    public float Direction { get { return direction; } }
+
     private void OnCollisionStay2D(Collision2D other)
     {
-        // проверяем столкновение объектов по тегу
-        if (other.gameObject.CompareTag(collisionTag))
+        health = other.gameObject.GetComponent<Health>();
+
+        if (health != null)
         {
-            Health health = other.gameObject.GetComponent<Health>();
-
-
-            if (timeBetweenAttacks < Time.time)
-            {
-                timeBetweenAttacks = Time.time + 1;
-                if (this.gameObject.tag == "Enemy")
-                {
-                    animator.SetTrigger("findPlayer");
-                }
-                health.TakeHit(damage);
-            }
-
+            direction = (other.transform.position - transform.position).x;
+            animator.SetFloat("Direction", Mathf.Abs(direction));
         }
     }
 
+    public void SetDamage()
+    {
+        if (health != null) { health.TakeHit(damage); }
+        //health = null;
+        direction = 0f;
+        animator.SetFloat("Direction", direction);
+    }
 }

@@ -1,4 +1,6 @@
 ﻿
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
@@ -6,13 +8,12 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private GameObject leftBorder;
     [SerializeField] private GameObject rightBorder;
     private Rigidbody2D rigidBody;
-
     [SerializeField] private bool isRightDerection;
     [SerializeField] private float speed;
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
-
     private GroundDetection groundDetection;
+    [SerializeField] private CollisionDamage collisionDamage;
 
     private void Start()
     {
@@ -22,46 +23,19 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
-        if (isRightDerection == true && groundDetection.IsGrounded == true)
+        if (groundDetection.IsGrounded)
         {
-            rigidBody.velocity = Vector2.right * speed;
-            if (transform.position.x >= rightBorder.transform.position.x)
-            {
-                isRightDerection = !isRightDerection;
-            }
-        }
-        else if (groundDetection.IsGrounded == true)
-        {
-            rigidBody.velocity = Vector2.left * speed;
-            if (transform.position.x <= leftBorder.transform.position.x)
-            {
-                isRightDerection = !isRightDerection;
-            }
+            if (transform.position.x > rightBorder.transform.position.x || collisionDamage.Direction < 0)
+            { isRightDerection = false; }
+
+            else if (transform.position.x < leftBorder.transform.position.x || collisionDamage.Direction > 0)
+            { isRightDerection = true; }
+
+            rigidBody.velocity = isRightDerection ? Vector2.right : Vector2.left;
         }
 
         // поворачиваем спрайт по х в зависимости от направления движения
-        if (rigidBody.velocity.x > 0)
-        {
-            spriteRenderer.flipX = true;
-            if (groundDetection.IsGrounded)
-            {
-                animator.SetFloat("Speed", rigidBody.velocity.x);
-            }else{
-                animator.SetFloat("Speed", 0);
-            }
-            
-        }
-        else
-        {
-            spriteRenderer.flipX = false;
-            if(groundDetection.IsGrounded)
-            {
-                animator.SetFloat("Speed", Mathf.Abs(rigidBody.velocity.x));
-            }
-            else{
-                animator.SetFloat("Speed", 0);
-            }
-            
-        }
+        if (rigidBody.velocity.x > 0) { spriteRenderer.flipX = true; }
+        if (rigidBody.velocity.x < 0) { spriteRenderer.flipX = false; }
     }
 }

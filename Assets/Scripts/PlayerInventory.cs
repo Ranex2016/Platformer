@@ -16,6 +16,7 @@ public class PlayerInventory : MonoBehaviour
             if (value >= 1) { coinsCount = value; }
         }
     }
+    
     private void Awake()
     {
         Instance = this; // Инициализация синглтона

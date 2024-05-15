@@ -83,6 +83,36 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 501007321}
   m_Enabled: 1
+--- !u!1 &985935180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 985935181}
+  m_Layer: 0
+  m_Name: ArrowSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4162164826716764455, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &985935181
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985935180}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.37, y: 0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4989922734510536005}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3109586449101174233
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +197,6 @@ GameObject:
   - component: {fileID: 4989922734510536007}
   - component: {fileID: 4989922734510536024}
   - component: {fileID: 1669095785}
-  - component: {fileID: 5692234855415131997}
   - component: {fileID: 1196470195}
   - component: {fileID: 5868797756717549249}
   - component: {fileID: 1038633619}
@@ -191,6 +220,7 @@ Transform:
   m_Children:
   - {fileID: 501007324}
   - {fileID: 5380506224212817215}
+  - {fileID: 985935181}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -279,11 +309,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   force: 7
+  shootForce: 5
   minHeight: -10
   isCheatMode: 1
+  rb: {fileID: 4989922734510536007}
   groundDetection: {fileID: 8401348700311754689}
   animator: {fileID: 1038633619}
   spriteRenderer: {fileID: 4989922734510536004}
+  arrow: {fileID: 722630633633026236, guid: ede6b780d8bb3f440816bd36bafee04e, type: 3}
+  arrowSpawnPoint: {fileID: 985935181}
 --- !u!114 &1669095785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,20 +332,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   maxHealth: 200
---- !u!114 &5692234855415131997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4989922734510536003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 182b8fb03865bc444837c99577d1b425, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 10
-  collisionTag: Enemy
 --- !u!114 &1196470195
 MonoBehaviour:
   m_ObjectHideFlags: 0

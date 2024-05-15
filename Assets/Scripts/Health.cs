@@ -20,7 +20,6 @@ public class Health : MonoBehaviour
         }
         health -= damage;
         if (health <= 0) { Destroy(gameObject); }
-        Debug.Log("получен урон = " + damage + " осталось " + health);
     }
 
     public void SetHealth(int bonusHealth)
