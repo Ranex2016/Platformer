@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
     private bool isJumping;
     [SerializeField] private GameObject arrow;
     [SerializeField] private Transform arrowSpawnPoint;
+    private float cooldown = 0.4f;
+    private bool isCooldown = false;
 
     public float Speed // Свойство скорости
     {
@@ -80,13 +82,13 @@ public class Player : MonoBehaviour
     // Создание стрелы
     public void CheckShoot()
     {
-        if (Input.GetMouseButtonDown(0) && groundDetection.IsGrounded)
+        if (Input.GetMouseButtonDown(0) && groundDetection.IsGrounded && !isCooldown)
         {
             animator.SetBool("StartAttack", true);
         }
     }
 
-    public void StartAttack()
+    public void StartAttack() // Метод запускаемый из анимации Archery
     {
         GameObject prefab = Instantiate(arrow, arrowSpawnPoint.position, Quaternion.identity);
         prefab.GetComponent<Arrow>().SetImpuls(
@@ -94,6 +96,14 @@ public class Player : MonoBehaviour
                                     (spriteRenderer.flipX ? -force * shootForce : force * shootForce),
                                     this.gameObject);
         animator.SetBool("StartAttack", false);
+        StartCoroutine(Cooldown());
+    }
+
+    IEnumerator Cooldown()
+    {
+        isCooldown = true;
+        yield return new WaitForSeconds(cooldown);
+        isCooldown = false;
     }
 
     /// <summary>
