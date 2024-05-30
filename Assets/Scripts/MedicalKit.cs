@@ -13,13 +13,19 @@ public class MedicalKit : MonoBehaviour
             if (value >= 1) { bonusHealth = value; }
         }
     }
+    [SerializeField] private Animator animator;
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("Enemy"))
         {
             Health health = other.gameObject.GetComponent<Health>();
             health.SetHealth(bonusHealth);
-            Destroy(this.gameObject);
+            animator.SetTrigger("StartDestroy"); // Начинаем анимацию удаления аптечки
         }
+    }
+
+    public void EndDestroy() // Удаление аптечки со сцены.
+    {
+        Destroy(this.gameObject);
     }
 }

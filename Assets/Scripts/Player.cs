@@ -17,10 +17,15 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     private bool isJumping;
-    [SerializeField] private GameObject arrow;
+    [SerializeField] private Arrow arrow;
     [SerializeField] private Transform arrowSpawnPoint;
-    private float cooldown = 0.4f;
+    private Arrow currentArrow;
+    private float cooldown = 0.3f; // время перезарядки
     private bool isCooldown = false;
+    private List<Arrow> arrowsPool;
+    private int arrowsCount = 5;
+    private Health health; // Нужно для полученичя доступа для шкалы здоровья
+    public Health Health { get { return health; } }
 
     public float Speed // Свойство скорости
     {
@@ -32,14 +37,29 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Start()
+    {
+        health = GetComponent<Health>();
+
+        // Заполнение пула стрелами
+        arrowsPool = new List<Arrow>();
+        for (int i = 0; i < arrowsCount; i++)
+        {
+            var arrowTemp = Instantiate(arrow, arrowSpawnPoint);
+            arrowTemp.gameObject.SetActive(false);
+            arrowsPool.Add(arrowTemp);
+
+        }
+    }
+
+    private void Update()
     {
         animator.SetBool("isGrounded", groundDetection.IsGrounded);
         isJumping = isJumping && !groundDetection.IsGrounded;
 
         if (!isJumping && !groundDetection.IsGrounded) // если мы не пригнулы и не касаемся земли, то это подение
         {
-            animator.SetTrigger("StartFall");
+            //animator.SetTrigger("StartFall");
         }
         direction = Vector2.zero; // (0,0)
         if (Input.GetKey(KeyCode.A))
@@ -88,18 +108,46 @@ public class Player : MonoBehaviour
         }
     }
 
+    private Arrow GetArrowFromPool()
+    {
+        if (arrowsPool.Count > 0)
+        {
+            var arrowTemp = arrowsPool[0];
+            arrowsPool.Remove(arrowTemp);
+            arrowTemp.transform.parent = null; // извлечение из родительского объекта
+            arrowTemp.transform.position = arrowSpawnPoint.position; // присвоение позиции спавна
+            arrowTemp.gameObject.SetActive(true);
+            return arrowTemp;
+        }
+        return Instantiate(arrow, arrowSpawnPoint.position, Quaternion.identity);
+    }
+
+    // Возврат стрелы в пул
+    public void ReturnArrowToPool(Arrow arrowTemp)
+    {
+        if (!arrowsPool.Contains(arrowTemp))
+        {
+            arrowsPool.Add(arrowTemp);
+        }
+        arrowTemp.transform.parent = arrowSpawnPoint; // 
+        arrowTemp.transform.position = arrowSpawnPoint.position; // 
+        arrowTemp.gameObject.SetActive(false);
+    }
+
     public void StartAttack() // Метод запускаемый из анимации Archery
     {
-        GameObject prefab = Instantiate(arrow, arrowSpawnPoint.position, Quaternion.identity);
-        prefab.GetComponent<Arrow>().SetImpuls(
-                                    Vector2.right,
-                                    (spriteRenderer.flipX ? -force * shootForce : force * shootForce),
-                                    this.gameObject);
+        //currentArrow = Instantiate(arrow, arrowSpawnPoint.position, Quaternion.identity);
+        currentArrow = GetArrowFromPool();
+        currentArrow.SetImpuls(
+                                Vector2.right,
+                                (spriteRenderer.flipX ? -force * shootForce : force * shootForce),
+                                this);
         animator.SetBool("StartAttack", false);
+
         StartCoroutine(Cooldown());
     }
 
-    IEnumerator Cooldown()
+    private IEnumerator Cooldown()
     {
         isCooldown = true;
         yield return new WaitForSeconds(cooldown);
@@ -125,11 +173,16 @@ public class Player : MonoBehaviour
     // Проверка столкновения с манеткой
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Coin"))
+        if (GameManager.Instance.coinContainer.ContainsKey(other.gameObject))
         {
-            PlayerInventory.Instance.CoinsCount += 1;
-            Debug.Log("Манет у игрока: " + PlayerInventory.Instance.CoinsCount);
-            Destroy(other.gameObject);
+            PlayerInventory.Instance.CoinsCount += 1; // Добавляем манетки
+            print("Манет у игрока: " + PlayerInventory.Instance.CoinsCount);
+
+            // Уничтожить манетку со сцены
+            var coin = GameManager.Instance.coinContainer[other.gameObject];
+            coin.StartDestroy();
+            PlayerInventory.Instance.CoinsText.text = PlayerInventory.Instance.CoinsCount.ToString();
+            //Destroy(other.gameObject);
         }
     }
 }

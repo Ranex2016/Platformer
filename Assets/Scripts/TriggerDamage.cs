@@ -17,20 +17,55 @@ public class TriggerDamage : MonoBehaviour
         get { return parent; }
         set { parent = value; }
     }
+    private IObjectDestroyer destroyer; // Сылка на интерфейс уничтожения объектов
+
+    /// <summary>
+    /// Метод для инициализации уничтожителя перед его использованием.
+    /// </summary>
+    /// <param name="destroyer"></param>
+    public void Init(IObjectDestroyer destroyer)
+    {
+        this.destroyer = destroyer;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        print("Столкновение - OnTriggerEnter2D");
         // Проверка на столкновение с родительским колайдером.
         if (other.gameObject == parent)
         { return; }
 
-        var health = other.gameObject.GetComponent<Health>();
-        if (health != null && isDestroyingAfterCollision)
+        // проверка в словаре что есть такой объект
+        if (GameManager.Instance.healthContainer.ContainsKey(other.gameObject)) 
         {
-            //Debug.Log(other.gameObject.name + " напал на "+ parent.name);
+            // Достаем компонент Health и получаем ссылку на его игровоей объект
+            var health = GameManager.Instance.healthContainer[other.gameObject];
             health.TakeHit(damage);
-            print("Стрела уничтожена!");
-            Destroy(this.gameObject);
+        }
+
+        if (isDestroyingAfterCollision)
+        {
+            if (destroyer != null)
+            {
+                print("Стрела отправленна в колчан!");
+                destroyer.Destroy(this.gameObject); // уничтожим объект прикрепленный к этому скрипту
+            }
+            else
+            {
+                print("Стрела уничтожена!");
+                Destroy(this.gameObject);
+            }
+
         }
     }
+}
+
+/// <summary>
+/// Интерфейс для написания собственного способа уничтожения объектов.
+/// Перед использованием проинициализируйте IObjectDestroyer используя метод Init()
+/// Иначе уничтожение будет проходить стандартным образом через Destroy()
+/// </summary>
+public interface IObjectDestroyer
+{
+    void Destroy(GameObject gameObject);
 }

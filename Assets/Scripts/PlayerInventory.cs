@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -15,6 +16,12 @@ public class PlayerInventory : MonoBehaviour
         {
             if (value >= 1) { coinsCount = value; }
         }
+    }
+
+    [SerializeField] private Text coinsText;
+    public Text CoinsText {
+        get { return coinsText; }
+        set {coinsText = value;}
     }
     
     private void Awake()

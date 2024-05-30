@@ -13,7 +13,12 @@ public class CollisionDamage : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D other)
     {
-        health = other.gameObject.GetComponent<Health>();
+        //health = other.gameObject.GetComponent<Health>();
+        // Проверим есть ли у столкнувшегося объекта компонент Health
+        if(GameManager.Instance.healthContainer.ContainsKey(other.gameObject))
+        {
+            health = GameManager.Instance.healthContainer[other.gameObject];
+        }
 
         if (health != null)
         {
@@ -25,7 +30,7 @@ public class CollisionDamage : MonoBehaviour
     public void SetDamage()
     {
         if (health != null) { health.TakeHit(damage); }
-        //health = null;
+        health = null;
         direction = 0f;
         animator.SetFloat("Direction", direction);
     }
