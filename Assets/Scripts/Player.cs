@@ -184,5 +184,12 @@ public class Player : MonoBehaviour
             PlayerInventory.Instance.CoinsText.text = PlayerInventory.Instance.CoinsCount.ToString();
             //Destroy(other.gameObject);
         }
+
+        if (GameManager.Instance.itemConteiner.ContainsKey(other.gameObject))
+        {
+            var itemComponent = GameManager.Instance.itemConteiner[other.gameObject];
+            PlayerInventory.Instance.items.Add(itemComponent.Item);
+            itemComponent.Destroy(other.gameObject);
+        }
     }
 }
