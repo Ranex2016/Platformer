@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    [SerializeField] private BuffReciever buffReciever;
     private void Start()
     {
         health = GetComponent<Health>();
@@ -50,6 +51,13 @@ public class Player : MonoBehaviour
             arrowsPool.Add(arrowTemp);
 
         }
+
+        buffReciever.OnBuffChanged += TestMethod;   
+    }
+
+    public void TestMethod()
+    {
+        Debug.Log("Произошел вызов делегата");
     }
 
     private void Update()

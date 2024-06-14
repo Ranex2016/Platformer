@@ -22,4 +22,22 @@ public class Cell : MonoBehaviour
         this.item = item;
         icon.sprite = item.Icon;
     }
+
+
+    public void OnClickCell()
+    {
+        if(item == null){
+            return;
+        }
+        //Удаляем выбраный элемент из массива
+        GameManager.Instance.inventory.Items.Remove(item);
+
+        //Создаем бафф
+        Buff buff = new Buff{
+            type = item.Type,
+            additiveBonus = item.Value
+        };
+        //Получить бафф
+        GameManager.Instance.inventory.BuffReciever.AddBuff(buff);
+    }
 }

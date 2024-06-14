@@ -20,6 +20,9 @@ public class PlayerInventory : MonoBehaviour
     }
     public List<Item> items; // !!! Нужно сделать приватной и переделать доступ через свойсво !!!
     public List<Item> Items { get { return items; } }
+    private BuffReciever buffReciever;
+    [HideInInspector] public BuffReciever BuffReciever { get { return buffReciever; } }
+
 
     // Создание синглтона
     public static PlayerInventory Instance { get; set; }
@@ -31,5 +34,6 @@ public class PlayerInventory : MonoBehaviour
     private void Start()
     {
         items = new List<Item>();
+        buffReciever = GetComponent<BuffReciever>();
     }
 }
