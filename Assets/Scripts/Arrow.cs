@@ -16,11 +16,12 @@ public class Arrow : MonoBehaviour, IObjectDestroyer
     [SerializeField] private TriggerDamage triggerDamage;
     [SerializeField] private Player player;
 
-    public void SetImpuls(Vector2 direction, float force, Player player)
+    public void SetImpuls(Vector2 direction, float force, int bonusDamage, Player player)
     {
         this.player = player;
         triggerDamage.Init(this); // Инициализация собственного уничтожителя стрел
         triggerDamage.Parent = player.gameObject; // назначение родительского объекта
+        triggerDamage.Damage += bonusDamage;
         rb.AddForce(direction * force, ForceMode2D.Impulse);
         // Повернем стрелу если ускорение отрецательное (влево)
         if (force < 0) { transform.rotation = Quaternion.Euler(0, 180, 0); }

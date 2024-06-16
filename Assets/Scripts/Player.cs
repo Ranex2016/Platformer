@@ -11,6 +11,11 @@ public class Player : MonoBehaviour
     [SerializeField] private float shootForce;
     [SerializeField] private float minHeight = -10;
     [SerializeField] private bool isCheatMode = false;
+
+    private float bonusForce;
+    private float bonusDamage;
+    private float bonusHealth;
+
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private GroundDetection groundDetection;
     private Vector2 direction;
@@ -40,6 +45,7 @@ public class Player : MonoBehaviour
     [SerializeField] private BuffReciever buffReciever;
     private void Start()
     {
+        buffReciever = GetComponent<BuffReciever>();
         health = GetComponent<Health>();
 
         // Заполнение пула стрелами
@@ -52,12 +58,21 @@ public class Player : MonoBehaviour
 
         }
 
-        buffReciever.OnBuffChanged += TestMethod;   
+        buffReciever.OnBuffChanged += ApplyBuffs;
+
     }
 
-    public void TestMethod()
+    public void ApplyBuffs()
     {
         Debug.Log("Произошел вызов делегата");
+        var forceBuff = buffReciever.Buffs.Find(t => t.type == BuffType.Force);
+        var damageBuff = buffReciever.Buffs.Find(t => t.type == BuffType.Damage);
+        var armoreBuff = buffReciever.Buffs.Find(t => t.type == BuffType.Armore);
+
+        bonusForce = forceBuff == null ? 0 : forceBuff.additiveBonus;
+        bonusDamage = damageBuff == null ? 0 : damageBuff.additiveBonus;
+        bonusHealth = armoreBuff == null ? 0 : armoreBuff.additiveBonus;
+        health.SetHealth((int)bonusHealth);
     }
 
     private void Update()
@@ -149,6 +164,7 @@ public class Player : MonoBehaviour
         currentArrow.SetImpuls(
                                 Vector2.right,
                                 (spriteRenderer.flipX ? -force * shootForce : force * shootForce),
+                                (int)bonusDamage,
                                 this);
         animator.SetBool("StartAttack", false);
 

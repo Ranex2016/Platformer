@@ -6,8 +6,8 @@ using UnityEngine;
 public class BuffReciever : MonoBehaviour
 {
     private List<Buff> buffs;
+    public List<Buff> Buffs { get { return buffs; } }
     public Action OnBuffChanged;
-
     private void Start()
     {
         buffs = new List<Buff>();
