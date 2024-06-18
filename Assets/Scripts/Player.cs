@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float shootForce;
     [SerializeField] private float minHeight = -10;
     [SerializeField] private bool isCheatMode = false;
+    [SerializeField] private Camera playerCamera;
 
     private float bonusForce;
     private float bonusDamage;
@@ -24,13 +25,17 @@ public class Player : MonoBehaviour
     private bool isJumping;
     [SerializeField] private Arrow arrow;
     [SerializeField] private Transform arrowSpawnPoint;
+    [SerializeField] private float damageForce;
     private Arrow currentArrow;
     private float cooldown = 0.3f; // время перезарядки
     private bool isCooldown = false;
     private List<Arrow> arrowsPool;
     private int arrowsCount = 5;
+    private bool isBlockMovement;
     private Health health; // Нужно для полученичя доступа для шкалы здоровья
     public Health Health { get { return health; } }
+
+    public UICharacterController controller;
 
     public float Speed // Свойство скорости
     {
@@ -43,8 +48,11 @@ public class Player : MonoBehaviour
     }
 
     [SerializeField] private BuffReciever buffReciever;
+
     private void Start()
     {
+        controller = GetComponent<UICharacterController>();
+        InitUIController(controller);
         buffReciever = GetComponent<BuffReciever>();
         health = GetComponent<Health>();
 
@@ -59,7 +67,7 @@ public class Player : MonoBehaviour
         }
 
         buffReciever.OnBuffChanged += ApplyBuffs;
-
+        health.OnTakeHit += TakeHit;
     }
 
     public void ApplyBuffs()
@@ -75,7 +83,39 @@ public class Player : MonoBehaviour
         health.SetHealth((int)bonusHealth);
     }
 
+    private void TakeHit(int damage, GameObject attacker)
+    {
+        animator.SetTrigger("GetDamage");
+        isBlockMovement = true;
+        // Добавляем приложеную силу от урона противника что бы он отскакивал, учитывая с какой стороны урон
+        rb.AddForce(transform.position.x < attacker.transform.position.x ?
+                                            new Vector2(-damageForce, 3f) :
+                                            new Vector2(damage, 3f), ForceMode2D.Impulse);
+    }
+
+    // Вызывается перед началом анимации хотьбы
+    private void UnblockMovement()
+    {
+        isBlockMovement = false;
+    }
+
     private void Update()
+    {
+        // Управляем анимациех ходьбы
+        animator.SetFloat("Speed", Mathf.Abs(direction.x));
+        Move();
+        CheckFall();
+
+        //Проверяем что герой уничтожен
+        if (health.CurrentHealth <= 0)
+        {
+            // Вызовем метод чтобы скинуть камеру с героя в корень сцены.
+            OnDestroy();
+        }
+        //CheckShoot();
+    }
+
+    private void Move()
     {
         animator.SetBool("isGrounded", groundDetection.IsGrounded);
         isJumping = isJumping && !groundDetection.IsGrounded;
@@ -85,13 +125,13 @@ public class Player : MonoBehaviour
             //animator.SetTrigger("StartFall");
         }
         direction = Vector2.zero; // (0,0)
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) || controller.Leaft.IsPressed)
         {
             //transform.Translate(Vector2.left * Time.deltaTime * speed);
             direction = Vector2.left;
             spriteRenderer.flipX = true;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) || controller.Right.IsPressed)
         {
             //transform.Translate(Vector2.right * Time.deltaTime * speed);
             direction = Vector2.right;
@@ -99,33 +139,35 @@ public class Player : MonoBehaviour
         }
         direction *= speed;
         direction.y = rb.velocity.y;
-        rb.velocity = direction;
-
-        if (Input.GetKeyDown(KeyCode.Space) && groundDetection.IsGrounded) // Прыжок игрока
+        // Двигаемся если движение не заблокировано
+        if (!isBlockMovement)
         {
-            Debug.Log("Прыжок!");
-            rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
-            animator.SetTrigger("StartJump");
-            isJumping = true;
+            rb.velocity = direction;
         }
+
 
         // отмена стрельбы если персонаж находится не на земле или движется
         if (!groundDetection.IsGrounded || direction.x > 0 || direction.x < 0)
         {
             animator.SetBool("StartAttack", false);
         }
+    }
 
-        // Управляем анимациех ходьбы
-        animator.SetFloat("Speed", Mathf.Abs(direction.x));
-
-        CheckFall();
-        CheckShoot();
+    private void Jump()
+    {
+        if (groundDetection.IsGrounded) // Прыжок игрока
+        {
+            Debug.Log("Прыжок!");
+            rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+            animator.SetTrigger("StartJump");
+            isJumping = true;
+        }
     }
 
     // Создание стрелы
     public void CheckShoot()
     {
-        if (Input.GetMouseButtonDown(0) && groundDetection.IsGrounded && !isCooldown)
+        if (groundDetection.IsGrounded && !isCooldown)
         {
             animator.SetBool("StartAttack", true);
         }
@@ -215,5 +257,22 @@ public class Player : MonoBehaviour
             PlayerInventory.Instance.items.Add(itemComponent.Item);
             itemComponent.Destroy(other.gameObject);
         }
+    }
+
+    // Инициализация кнопок упрваления
+    public void InitUIController(UICharacterController uiController)
+    {
+        controller = uiController;
+        // Стандартная подписка на нажатие кнопки, передаем ссылку на метод прыжка
+        controller.Jump.onClick.AddListener(Jump);
+        // Стандартная подписка на нажатие кнопки, передаем ссылку на метод стрельбы
+        controller.Fire.onClick.AddListener(CheckShoot);
+    }
+
+    // должен вызываться при уничтожении нашего игрока
+    public void OnDestroy()
+    {
+        playerCamera.transform.parent = null;
+        playerCamera.enabled = true;
     }
 }

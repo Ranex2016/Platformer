@@ -29,7 +29,7 @@ public class CollisionDamage : MonoBehaviour
 
     public void SetDamage()
     {
-        if (health != null) { health.TakeHit(damage); }
+        if (health != null) { health.TakeHit(damage, gameObject); }
         health = null;
         direction = 0f;
         animator.SetFloat("Direction", direction);

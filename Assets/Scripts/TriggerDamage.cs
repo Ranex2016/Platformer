@@ -40,7 +40,7 @@ public class TriggerDamage : MonoBehaviour
         {
             // Достаем компонент Health и получаем ссылку на его игровоей объект
             var health = GameManager.Instance.healthContainer[other.gameObject];
-            health.TakeHit(damage);
+            health.TakeHit(damage, gameObject);
         }
 
         if (isDestroyingAfterCollision)

@@ -28,7 +28,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 7199157113505750998}
   m_Father: {fileID: 4989922734510536005}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -201,6 +202,7 @@ GameObject:
   - component: {fileID: 1038633619}
   - component: {fileID: 7936593102855804859}
   - component: {fileID: 3883901434149082847}
+  - component: {fileID: 1684241116}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -222,7 +224,6 @@ Transform:
   - {fileID: 501007324}
   - {fileID: 5380506224212817215}
   - {fileID: 985935181}
-  - {fileID: 7199157113505750998}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -311,15 +312,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   force: 11
-  shootForce: 5
+  shootForce: 2
   minHeight: -10
   isCheatMode: 1
+  playerCamera: {fileID: 501007323}
   rb: {fileID: 4989922734510536007}
   groundDetection: {fileID: 8401348700311754689}
   animator: {fileID: 1038633619}
   spriteRenderer: {fileID: 4989922734510536004}
   arrow: {fileID: 2479314102469669568, guid: ede6b780d8bb3f440816bd36bafee04e, type: 3}
   arrowSpawnPoint: {fileID: 985935181}
+  damageForce: 5
+  controller: {fileID: 0}
+  buffReciever: {fileID: 0}
 --- !u!114 &1669095785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,6 +401,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e9f01887f7c9c4b80c9ad996f2161a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1684241116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4989922734510536003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18f994a813603354598329783d707c73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leaft: {fileID: 0}
+  right: {fileID: 0}
+  fire: {fileID: 0}
+  jump: {fileID: 0}
 --- !u!1 &8306820919947096007
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,11 +442,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8306820919947096007}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -2, z: 10}
   m_LocalScale: {x: 0.6, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4989922734510536005}
-  m_RootOrder: 3
+  m_Father: {fileID: 501007324}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5565021376742127554
 SpriteRenderer:
